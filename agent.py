@@ -52,8 +52,15 @@ def _get_client():
     api_key = os.environ.get("GEMINI_API_KEY")
 
     if not api_key:
+        try:
+            import streamlit as st
+            api_key = st.secrets.get("GEMINI_API_KEY")
+        except Exception:
+            api_key = None
+
+    if not api_key:
         raise RuntimeError(
-            "GEMINI_API_KEY is not set. Add it to your .env file or environment."
+            "GEMINI_API_KEY is not configured. Add it to your local .env file or Streamlit Cloud secrets."
         )
 
     return genai.Client(api_key=api_key)
